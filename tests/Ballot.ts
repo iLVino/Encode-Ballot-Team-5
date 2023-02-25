@@ -44,4 +44,44 @@ describe("Ballot", () => {
             expect(voter.weight).to.eq(1);
         });
     });
+
+    describe("when voting rights are given", () => {
+        it("should set voting weight as 1", async () => {
+            const signers = await ethers.getSigners();
+            const voterAddress = signers[1].address;
+            const tx = await ballotContract.giveRightToVote(voterAddress);
+            await tx.wait();
+            const voter = await ballotContract.voters(voterAddress);
+            expect(voter.weight).to.eq(1);
+        });
+    });
+
+    describe("when votes are cast", () => {
+        it("should increment the vote count", async () => {
+            const signers = await ethers.getSigners();
+            let proposal = await ballotContract.proposals(0);
+            const initialCount = proposal.voteCount;
+            const tx = await ballotContract.vote(0);
+            await tx.wait();
+            proposal = await ballotContract.proposals(0);
+            const currentCount = proposal.voteCount;
+            expect(initialCount).to.eq(currentCount.sub(1));
+        });
+    });
+
+    describe("when votes are delegated", () => {
+        it("should increment the weight", async () => {
+            const signers = await ethers.getSigners();
+            const delegate = signers[1].address;
+            let tx = await ballotContract.giveRightToVote(delegate);
+            await tx.wait();
+            let voter = await ballotContract.voters(delegate)
+            const initialWeight = voter.weight;
+            tx = await ballotContract.delegate(delegate);
+            await tx.wait();
+            voter = await ballotContract.voters(delegate)
+            const currentWeight = voter.weight;
+            expect(initialWeight).to.eq(currentWeight.sub(1));
+        });
+    })
 });
