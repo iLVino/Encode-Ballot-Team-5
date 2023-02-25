@@ -58,7 +58,6 @@ describe("Ballot", () => {
 
     describe("when votes are cast", () => {
         it("should increment the vote count", async () => {
-            const signers = await ethers.getSigners();
             let proposal = await ballotContract.proposals(0);
             const initialCount = proposal.voteCount;
             const tx = await ballotContract.vote(0);
