@@ -27,8 +27,10 @@ async function main() {
         console.log(`Proposal N. ${index + 1}: ${element}`);
     });
     
+    // Creation of new instance Ballot__factory() from typechain-types
     const ballotContractFactory = new Ballot__factory(signer);
     console.log("Deploying Ballot contract...");
+    // Deployment of the contract
     const ballotContract = await ballotContractFactory.deploy(
         proposals.map((prop) => ethers.utils.formatBytes32String(prop))
     );
